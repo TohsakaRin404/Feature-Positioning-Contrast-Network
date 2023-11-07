@@ -54,7 +54,8 @@ class FPCN(nn.Module):
 
         for i in range(feature_map.size()[0]):
             mask = torch.tensor(intersections[i]).int().cuda()
-            feature_map_region[i] = torch.mul(feature_map[i], mask)  # Broadcasting
+            alpha = mask.float().norm(1)/torch.numel(mask)
+            feature_map_region[i] = torch.mul(feature_map[i], alpha*mask)  # Broadcasting
 
         pool_out = self.avg(feature_map_region).squeeze()
 
